@@ -9,6 +9,8 @@ file in the "treated" folder and the resulting processed file in the "processed"
 folder. If you don't want to output any file this can be controlled from your
 code.
 
+![Screenshot](screenshot.jpg "Screenshot")
+
 # Download and usage
 
 Please use these links to download and install for your platform:
