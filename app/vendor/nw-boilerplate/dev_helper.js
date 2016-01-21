@@ -5,7 +5,7 @@
     'use strict';
 
     var gui = require('nw.gui');
-    
+
     var keyDown = function (e) {
         if ((e.ctrlKey || e.metaKey) && e.keyCode == 82) {
             // CTRL (CMD) + R reloads the page

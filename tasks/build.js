@@ -1,8 +1,8 @@
 'use strict';
 
 var gulp = require('gulp');
-var babel = require('gulp-babel');
-var sourcemaps = require('gulp-sourcemaps');
+//var babel = require('gulp-babel');
+//var sourcemaps = require('gulp-sourcemaps');
 var less = require('gulp-less');
 var jetpack = require('fs-jetpack');
 
@@ -19,6 +19,8 @@ var paths = {
         '!app/vendor/**'
     ],
     copyFromAppDir: [
+        './*.js',
+        './scripts/*.js',
         './node_modules/**',
         './vendor/**',
         './**/*.html'
@@ -36,7 +38,9 @@ gulp.task('clean', function(callback) {
 
 var copyTask = function () {
     projectDir.copy('resources/icon.png', destDir.path('icon.png'), { overwrite: true });
-
+    projectDir.copy('app/node_modules/bootstrap/fonts/glyphicons-halflings-regular.woff2', destDir.path('fonts/glyphicons-halflings-regular.woff2'), { overwrite: true });
+    projectDir.copy('app/node_modules/bootstrap/fonts/glyphicons-halflings-regular.woff', destDir.path('fonts/glyphicons-halflings-regular.woff'), { overwrite: true });
+    projectDir.copy('app/node_modules/bootstrap/fonts/glyphicons-halflings-regular.ttf', destDir.path('fonts/glyphicons-halflings-regular.ttf'), { overwrite: true });
     return projectDir.copyAsync('app', destDir.path(), {
         overwrite: true,
         matching: paths.copyFromAppDir
@@ -46,21 +50,21 @@ gulp.task('copy', ['clean'], copyTask);
 gulp.task('copy-watch', copyTask);
 
 
-var transpileTask = function () {
-    return gulp.src(paths.jsCodeToTranspile)
-    .pipe(sourcemaps.init())
-    .pipe(babel({ modules: 'amd' }))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(destDir.path()));
-};
-gulp.task('transpile', ['clean'], transpileTask);
-gulp.task('transpile-watch', transpileTask);
+//var transpileTask = function () {
+//    return gulp.src(paths.jsCodeToTranspile)
+//    .pipe(sourcemaps.init())
+//    .pipe(babel({ modules: 'amd' }))
+//    .pipe(sourcemaps.write('.'))
+//    .pipe(gulp.dest(destDir.path()));
+//};
+//gulp.task('transpile', ['clean'], transpileTask);
+//gulp.task('transpile-watch', transpileTask);
 
 
 var lessTask = function () {
-    return gulp.src('app/stylesheets/main.less')
+    return gulp.src('app/styles/main.less')
     .pipe(less())
-    .pipe(gulp.dest(destDir.path('stylesheets')));
+    .pipe(gulp.dest(destDir.path('styles')));
 };
 gulp.task('less', ['clean'], lessTask);
 gulp.task('less-watch', lessTask);
@@ -95,10 +99,10 @@ gulp.task('finalize', ['clean'], function () {
 
 
 gulp.task('watch', function () {
-    gulp.watch(paths.jsCodeToTranspile, ['transpile-watch']);
+    //gulp.watch(paths.jsCodeToTranspile, ['transpile-watch']);
     gulp.watch(paths.copyFromAppDir, { cwd: 'app' }, ['copy-watch']);
     gulp.watch('app/**/*.less', ['less-watch']);
 });
 
 
-gulp.task('build', ['transpile', 'less', 'copy', 'finalize']);
+gulp.task('build', ['less', 'copy', 'finalize']);

@@ -1,10 +1,13 @@
 <!doctype html>
-<html>
-<head>
+<html ng-app="wtfApp">
+  <head>
     <meta charset="utf-8">
-    <title>NW Boilerplate</title>
+    <title>NW Watchfolder Processor</title>
 
-    <link href="./stylesheets/main.css" rel="stylesheet" type="text/css">
+    <!-- Styles -->
+    <link href="./vendor/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./node_modules/angular-ui-switch/angular-ui-switch.min.css" rel="stylesheet" type="text/css">
+    <link href="./styles/main.css" rel="stylesheet" type="text/css">
 
     <!-- Scripts giving you few extra things in NW.js -->
     <script src="vendor/nw-boilerplate/window_state.js"></script>
@@ -12,37 +15,185 @@
     <script src="vendor/nw-boilerplate/external_links.js"></script>
     <script src="vendor/nw-boilerplate/dev_helper.js"></script>
     <script src="vendor/nw-boilerplate/env_config.js"></script>
-    <script>
-        (function () {
-            var gui = require('nw.gui');
-            var win = gui.Window.get();
 
-            // Create default menu items for OSX
-            if (process.platform === 'darwin') {
-                var mb = new gui.Menu({ type: "menubar" });
-                mb.createMacBuiltin(gui.App.manifest.productName);
-                win.menu = mb;
-            }
-        }());
-    </script>
+    <!-- Libs -->
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/ui-bootstrap.min.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script src="node_modules/angular-ui-switch/angular-ui-switch.min.js"></script>
+    <script src="node_modules/ace-builds/src-min-noconflict/ace.js"></script>
+    <script src="node_modules/angular-ui-ace/src/ui-ace.js"></script>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
 
-    <!-- Load real app code -->
-    <script src="vendor/require.js"></script>
-    <script>
-        requirejs(['app'], function (app) {});
-    </script>
-</head>
-<body>
+    <!-- Custom scripts -->
+    <script src="scripts/menus.js"></script>
+    <script src="scripts/app.js"></script>
 
-    <div class="container">
-        <h1 id="greet"></h1>
-        <p class="subtitle">
-            Welcome to <a href="https://github.com/nwjs/nw.js" class="js-external-link">NW.js</a> app running on this magnificent <strong id="platform-info"></strong> machine.
-        </p>
-        <p class="subtitle">
-            You are in <strong id="env-name"></strong> environment.
-        </p>
+  </head>
+  <body>
+
+    <div class="container-fluid" ng-controller="wtfCtrl">
+
+      <!-- TOP ROW (WATCHFOLDER CONF) -->
+      <div class="row topMargin">
+        <div class="col-sm-11">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">Config</h3>
+            </div>
+            <div class="panel-body">
+              <form role="form" class="row">
+
+                <div class="col-sm-10">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="input-group">
+                          <span class="input-group-addon">Watch:</span>
+                          <input class="form-control input-sm" type="text" ng-model="watchFolderPath" ng-disabled="wtfActive" />
+                          <span class="input-group-btn"><button ng-click="updatePath('watchFolderPath')" ng-disabled="wtfActive" class="btn btn-primary btn-sm">...</button></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="input-group">
+                          <span class="input-group-addon">Process:</span>
+                          <select class="form-control input-sm" ng-model="processingOrder" ng-disabled="wtfActive">
+                            <option value="name">By filename</option>
+                            <option value="date">By creation date</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="input-group">
+                          <span class="input-group-addon">Treated:</span>
+                          <input class="form-control input-sm" type="text" ng-model="treatedPath" ng-disabled="wtfActive" />
+                          <span class="input-group-btn"><button ng-click="updatePath('treatedPath')" ng-disabled="wtfActive" class="btn btn-primary btn-sm">...</button></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="input-group">
+                          <span class="input-group-addon">Processed:</span>
+                          <input class="form-control input-sm" type="text" ng-model="processedPath" ng-disabled="wtfActive" />
+                          <span class="input-group-btn"><button ng-click="updatePath('processedPath')" ng-disabled="wtfActive" class="btn btn-primary btn-sm">...</button></span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="col-sm-2">
+
+                  <span class="label label-default">Files per poll:</span>
+                  <div class="input-group">
+                    <span class="input-group-btn" ng-click="minus('filesPerPoll', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button></span>
+                    <input type="text" class="form-control input-sm text-center filesPerPoll" ng-model="filesPerPoll" ng-disabled="wtfActive" />
+                    <span class="input-group-btn" ng-click="plus('filesPerPoll', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button></span>
+                  </div>
+
+                  <span class="label label-default">Interval (secs):</span>
+                  <div class="input-group">
+                    <span class="input-group-btn" ng-click="minus('pollingInterval', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button></span>
+                    <input type="text" class="form-control input-sm text-center pollingInterval" ng-model="pollingInterval" ng-disabled="wtfActive" />
+                    <span class="input-group-btn" ng-click="plus('pollingInterval', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button></span>
+                  </div>
+
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-1 switchContainer">
+          <img src="icon.png" width="55" />
+          <form class="form-horizontal" role="form">
+            <label for="switch" class="">
+              <span class="label label-default">ON/OFF:</span>
+            </label>
+            <!-- FEAT enhance here https://github.com/xpepermint/angular-ui-switch -->
+            <switch id="enabled" name="enabled" ng-model="wtfActive" ng-change="changeState()" class="green" id="switch" on="On" off="Off"></switch>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- MIDDLE ROW (EDITORS) -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-success">
+            <div class="panel-heading">
+              <h3 class="panel-title">Code</h3>
+            </div>
+            <div class="panel-body">
+              <uib-tabset>
+                <uib-tab heading="Javascript" active="code.jsActive">
+                  <div ng-model="code.jsCode" ng-readonly="wtfActive" ui-ace="{
+                    onLoad : code.jsAceLoaded,
+                    onChange : code.jsAceChanged,
+                    useWrapMode : false,
+                    showGutter: false,
+                    theme:'twilight',
+                    mode: 'javascript'
+                  }"></div>
+                </uib-tab>
+                <uib-tab heading="XLST" active="code.xlstActive">
+                  <div ng-model="code.xlstCode" ng-readonly="wtfActive" ui-ace="{
+                    onLoad : code.xlstAceLoaded,
+                    onChange : code.xlstAceChanged,
+                    useWrapMode : false,
+                    showGutter: false,
+                    theme:'twilight',
+                    mode: 'xml'
+                  }"></div>
+                </uib-tab>
+              </uib-tabset>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW LOGS -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="btn btn-xs pull-right" ng-click="clearLogs()">Clear</span>
+              <h3 class="panel-title">Logs ({{logs.length}})</h3>
+            </div>
+            <div class="panel-body">
+              <div class="logContainer">
+                <p class="logs" ng-repeat="log in logs">
+                  {{ log.time | date:'yyyy-MM-dd HH:mm:ss'}} - <span class="bold {{log.status}}">[{{log.status}}]</span> {{log.log}}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-</body>
+
+    <!-- Angular views -->
+    <div ng-controller="ModalCtrl">
+      <script type="text/ng-template" id="modalContent.html">
+        <div class="modal-header">
+          <h3 class="modal-title">Credits</h3>
+        </div>
+        <div class="modal-body">
+          Made with ♥ by <a href="" ng-click="openLink('http://fm.to.it')">fm.to.it</a>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="button" ng-click="closeModal()">Close</button>
+        </div>
+      </script>
+    </div>
+
+  </body>
 </html>

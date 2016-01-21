@@ -1,21 +1,30 @@
 {
-  "name": "nw-boilerplate",
-  "productName": "NW Boilerplate",
-  "description": "Starter for NW.js application. Out of the box ready for serious stuff.",
+  "name": "wtf.js-processor",
+  "productName": "WtF.js Watch that Folder Processor",
+  "description": "Process files from a watchfolder and output them somewhere.",
   "version": "0.1.0",
-  "author": "Mr Gumby <gumby@sillywalks.com>",
+  "author": "Francesco Merletti <me@fm.to.it>",
   "main": "app.html",
   "window": {
     "icon": "icon.png",
     "show": true,
-    "toolbar": true,
-    "width": 1000,
-    "height": 600,
+    "toolbar": false,
+    "width": 800,
+    "height": 700,
     "min_width": 800,
     "min_height": 400,
     "position": "center"
   },
   "dependencies": {
-    "fs-jetpack": "^0.6.4"
+    "ace-builds": "git+https://github.com/ajaxorg/ace-builds.git",
+    "angular": "^1.4.7",
+    "angular-ui-ace": "git+https://github.com/angular-ui/ui-ace.git",
+    "angular-ui-bootstrap": "^0.14.3",
+    "async": "^1.5.0",
+    "bootstrap": "^3.3.5",
+    "fs-jetpack": "^0.6.4",
+    "jquery": "^2.1.4",
+    "xmldom": "^0.1.19",
+    "xslt": "^0.5.0"
   }
 }

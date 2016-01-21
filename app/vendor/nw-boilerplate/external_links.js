@@ -2,24 +2,24 @@
 // Useful especially if you have a lot of links to deal with.
 //
 // Usage:
-// 
+//
 // Every link with class ".js-external-link" will be opened in external browser.
 // <a class="js-external-link" href="http://google.com">google</a>
 //
-// The same behaviour for many links can be achieved by adding 
+// The same behaviour for many links can be achieved by adding
 // this class to any parent tag of an anchor tag.
-// <p class="js-external-link"> 
+// <p class="js-external-link">
 //    <a href="http://google.com">google</a>
 //    <a href="http://bing.com">bing</a>
 // </p>
 
 (function () {
     var gui = require('nw.gui');
-    
+
     var supportExternalLinks = function (e) {
         var href;
         var isExternal = false;
-        
+
         var checkDomElement = function (element) {
             if (element.nodeName === 'A') {
                 href = element.getAttribute('href');
@@ -34,9 +34,9 @@
                 checkDomElement(element.parentElement);
             }
         }
-        
+
         checkDomElement(e.target);
     }
-    
+
     document.addEventListener('click', supportExternalLinks, false);
 }());
