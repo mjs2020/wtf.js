@@ -1,15 +1,22 @@
-WtF.js Processor (Watch that Folder Processor)
-==============================================
+## WtF.js (Watch that Folder) Javascript Watchfolder Processor
 
-# Description
+### Description
 
-The Watch that Folder Processor monitors files in a directory, processes them 
-through some JS code or a XLST transformation and drops a copy of the original
-file in the "treated" folder and the resulting processed file in the "processed"
-folder. If you don't want to output any file this can be controlled from your
-code.
+Monitors files in a directory, processes them through some JS or XSLT code and 
+outputs files in the "treated" and "processed" folders.
 
-# Download and usage
+### Features
+
+![Diagram](diagram.png "Diagram")
+
+* Windows / Mac / Linux builds available 
+* Processes any text file (txt, xml, json, csv...)
+* You can control checking frequency and number of files to process per run
+* Includes jQuery but other libraries can be added
+
+![Screenshot](screenshot.jpg "Screenshot")
+
+### Download and usage
 
 Please use these links to download and install for your platform:
 
@@ -17,31 +24,31 @@ Please use these links to download and install for your platform:
 * Windows TODO
 * OSX TODO
 
-# Development
+### Development
 
 If you would like to edit the code, fork this repository on github, clone the
 resulting repository to your machine and edit away.
 
 To start/test:
 
-    git clone [YOUR-REPO]
+    git clone YOUR-REPO
     cd YOUR-REPO
     npm install
     npm start
+    
+If you have problems with ```npm start``` try:
+    
+    ./node_modules/gulp/bin/gulp.js build
+    nw build/ --remote-debugging-port=9222
 
-# Credits
+### Credits
 
 Built with ❤ and Javascript by [fm.to.it](http://fm.to.it)
 
 WtF.js is built on top of [NW.js](https://github.com/nwjs/nw.js) using 
 [nw-boilerplate](https://github.com/szwacz/nw-boilerplate) with some modifications.
 
-The project uses:
-
-* [Angularjs](https://angularjs.org/).
-
-
-# Licence
+### Licence
 The MIT License (MIT)
 
 Copyright (c) 2015 Francesco Merletti - me@fm.to.it - @mjs2020
