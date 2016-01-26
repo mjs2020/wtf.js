@@ -2,11 +2,11 @@
 <html ng-app="wtfApp">
   <head>
     <meta charset="utf-8">
-    <title>NW Watchfolder Processor</title>
+    <title>WtF.js - Javascript Watchfolder Processor</title>
 
     <!-- Styles -->
-    <link href="./vendor/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="./node_modules/angular-ui-switch/angular-ui-switch.min.css" rel="stylesheet" type="text/css">
+    <link href="./styles/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="./styles/main.css" rel="stylesheet" type="text/css">
 
     <!-- Scripts giving you few extra things in NW.js -->
@@ -22,6 +22,7 @@
     <script src="node_modules/angular-ui-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script src="node_modules/angular-ui-switch/angular-ui-switch.min.js"></script>
     <script src="node_modules/ace-builds/src-min-noconflict/ace.js"></script>
+    <script src="node_modules/ace-builds/src-min-noconflict/ext-language_tools.js"></script>
     <script src="node_modules/angular-ui-ace/src/ui-ace.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
 
@@ -37,7 +38,13 @@
       <!-- TOP ROW (WATCHFOLDER CONF) -->
       <div class="row topMargin">
         <div class="col-sm-11">
-          <div class="panel panel-info">
+          <h3 class="app-title">
+            <span class="glyphicon glyphicon-folder-close"></span>
+            <span class="glyphicon glyphicon-menu-right"></span>
+            <span class="glyphicon glyphicon-folder-open"></span>
+            &nbsp;&nbsp;WtF.js Watch that Folder!
+          </h3>
+          <div class="panel panel-primary" id="config">
             <div class="panel-heading">
               <h3 class="panel-title">Config</h3>
             </div>
@@ -92,16 +99,16 @@
 
                   <span class="label label-default">Files per poll:</span>
                   <div class="input-group">
-                    <span class="input-group-btn" ng-click="minus('filesPerPoll', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button></span>
+                    <span class="input-group-btn" ng-click="minus('filesPerPoll', 1, 50, 1)"><button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-minus"></span></button></span>
                     <input type="text" class="form-control input-sm text-center filesPerPoll" ng-model="filesPerPoll" ng-disabled="wtfActive" />
-                    <span class="input-group-btn" ng-click="plus('filesPerPoll', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button></span>
+                    <span class="input-group-btn" ng-click="plus('filesPerPoll', 1, 50, 1)"><button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span></button></span>
                   </div>
 
                   <span class="label label-default">Interval (secs):</span>
                   <div class="input-group">
-                    <span class="input-group-btn" ng-click="minus('pollingInterval', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-minus"></span></button></span>
+                    <span class="input-group-btn" ng-click="minus('pollingInterval', 1, 50, 1)"><button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-minus"></span></button></span>
                     <input type="text" class="form-control input-sm text-center pollingInterval" ng-model="pollingInterval" ng-disabled="wtfActive" />
-                    <span class="input-group-btn" ng-click="plus('pollingInterval', 1, 50, 1)"><button class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span></button></span>
+                    <span class="input-group-btn" ng-click="plus('pollingInterval', 1, 50, 1)"><button class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-plus"></span></button></span>
                   </div>
 
                 </div>
@@ -112,24 +119,30 @@
         </div>
 
         <div class="col-sm-1 switchContainer">
-          <img src="icon.png" width="55" />
           <form class="form-horizontal" role="form">
-            <label for="switch" class="">
+            <label for="switch" class="onoffLabel">
               <span class="label label-default">ON/OFF:</span>
             </label>
             <!-- FEAT enhance here https://github.com/xpepermint/angular-ui-switch -->
             <switch id="enabled" name="enabled" ng-model="wtfActive" ng-change="changeState()" class="green" id="switch" on="On" off="Off"></switch>
+
+            <label for="switch" class="onoffLabel">
+              <span class="label label-default">Logs:</span>
+            </label>
+            <!-- FEAT enhance here https://github.com/xpepermint/angular-ui-switch -->
+            <switch id="enabled" name="enabled" ng-model="logsVisible" class="blue" id="switch" on="On" off="Off"></switch>
           </form>
         </div>
 
       </div>
 
       <!-- MIDDLE ROW (EDITORS) -->
-      <div class="row">
+      <div class="row" ng-hide="logsVisible">
         <div class="col-sm-12">
-          <div class="panel panel-success">
+          <div class="panel panel-primary" id="ProcessingPanel">
             <div class="panel-heading">
-              <h3 class="panel-title">Code</h3>
+              <span class="btn btn-xs pull-right" ng-click="openModal('codeInfo')"><span class="glyphicon glyphicon-info-sign"></span></span>
+              <h3 class="panel-title">Processing</h3>
             </div>
             <div class="panel-body">
               <uib-tabset>
@@ -138,7 +151,7 @@
                     onLoad : code.jsAceLoaded,
                     onChange : code.jsAceChanged,
                     useWrapMode : false,
-                    showGutter: false,
+                    showGutter: true,
                     theme:'twilight',
                     mode: 'javascript'
                   }"></div>
@@ -148,7 +161,7 @@
                     onLoad : code.xlstAceLoaded,
                     onChange : code.xlstAceChanged,
                     useWrapMode : false,
-                    showGutter: false,
+                    showGutter: true,
                     theme:'twilight',
                     mode: 'xml'
                   }"></div>
@@ -160,40 +173,89 @@
       </div>
 
       <!-- BOTTOM ROW LOGS -->
-      <div class="row">
+      <div class="row" ng-show="logsVisible">
         <div class="col-sm-12">
-          <div class="panel panel-primary">
+          <div class="panel panel-primary" id="LogsPanel">
             <div class="panel-heading">
-              <span class="btn btn-xs pull-right" ng-click="clearLogs()">Clear</span>
+              <span class="btn btn-xs pull-right" ng-click="clearLogs()"><span class="glyphicon glyphicon-erase"></span></span>
               <h3 class="panel-title">Logs ({{logs.length}})</h3>
             </div>
             <div class="panel-body">
               <div class="logContainer">
-                <p class="logs" ng-repeat="log in logs">
-                  {{ log.time | date:'yyyy-MM-dd HH:mm:ss'}} - <span class="bold {{log.status}}">[{{log.status}}]</span> {{log.log}}
-                </p>
+                <table class="table table-striped logs">
+                  <thead>
+                      <tr>
+                          <th class="col1">Date</th>
+                          <th class="col2">Status</th>
+                          <th class="col3">Log</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr ng-repeat="log in logs">
+                          <td class="col1">{{ log.time | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                          <td class="col2 status {{log.status}}">{{log.status}}</td>
+                          <td class="col3">{{log.log}}</td>
+                      </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-
-    <!-- Angular views -->
-    <div ng-controller="ModalCtrl">
-      <script type="text/ng-template" id="modalContent.html">
-        <div class="modal-header">
-          <h3 class="modal-title">Credits</h3>
-        </div>
-        <div class="modal-body">
-          Made with ♥ by <a href="" ng-click="openLink('http://fm.to.it')">fm.to.it</a>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" type="button" ng-click="closeModal()">Close</button>
-        </div>
+      <!-- MODAL CODE: credits -->
+      <script type="text/ng-template" id="credits.html">
+          <div class="modal-header">
+              <h3 class="modal-title">Credits</h3>
+          </div>
+          <div class="modal-body">
+            Built with ❤ and Javascript by <a href="http://fm.to.it">fm.to.it</a>.
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+          </div>
       </script>
+      <!-- MODAL CODE: code -->
+      <script type="text/ng-template" id="codeInfo.html">
+          <div class="modal-header">
+              <h3 class="modal-title">Information</h3>
+          </div>
+          <div class="modal-body">
+            <h2>Javascript tips</h2>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <h3>Adding libraries</h3>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <p>Tips for JS</p>
+            <h2>XLST tips</h2>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+            <p>Tips for XLST</p>
+          </div>
+          <div class="modal-footer">
+              <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+          </div>
+      </script>
+
+
     </div>
 
+    <!-- File dialogs -->
+    <input style="display:none;" id="openFile" type="file" />
+    <input style="display:none;" id="saveAs" type="file" nwsaveas />
   </body>
 </html>

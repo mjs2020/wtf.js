@@ -23,22 +23,55 @@ windowMenu.append(helpMenu);
 fileMenu.submenu.append(openOption);
 fileMenu.submenu.append(saveOption);
 fileMenu.submenu.append(closeOption);
+//fileMenu.submenu.append(runOption);
 helpMenu.submenu.append(helpOption);
 helpMenu.submenu.append(creditsOption);
 
-openOption.click  = function() { console.log('clicked open'); }
-saveOption.click  = function() {
-  var scope = angular.element($("#enabled")).scope();
-  scope.$apply(function(){
-    scope.logs.unshift({time: new Date(), status: 'info', log: 'clicked save'})
-  })
+openOption.click  = function() {
+  var scope = angular.element($("#enabled")).scope(),
+      button = $('#openFile');
+  button.unbind('change');
+  button.change(function(evt) { // Read file
+    var filename = $(this).val();
+    fs.readFile(filename, 'utf8', function(err, data) {
+      console.log(data);
+      if(err) { return console.log(err); }
+      var ext = filename.split('.');
+      if (ext[ext.length-1] == 'js') { scope.code.jsCode = data; }
+      if (ext[ext.length-1] == 'xslt')   { scope.code.xlstCode = data; }
+      scope.$apply();
+    });
+  });
+  button.trigger('click');
 }
-runOption.click   = function() { console.log('clicked run'); }
-closeOption.click = function() { console.log('clicked close'); }
-helpOption.click = function() { console.log('clicked help'); }
+saveOption.click  = function() {
+  var scope = angular.element($("#enabled")).scope(),
+      code = "";
+  if (scope.code.jsActive)   {  code = scope.code.jsCode; }
+  if (scope.code.xlstActive) {  code = scope.code.xlstCode.trim(); }
+  var button = $('#saveAs');
+  button.unbind('change');
+  button.change(function(evt) { // Write file
+    fs.writeFile($(this).val(), code, function(err) {
+      if(err) { return console.log(err); }
+      console.log("The file was saved!");
+    });
+  });
+  button.trigger('click');
+}
+runOption.click   = function() {
+  // TODO
+}
+closeOption.click = function() {
+  win.close();
+}
+helpOption.click = function() {
+  var scope = angular.element($("#enabled")).scope();
+  scope.openModal('codeInfo');
+}
 creditsOption.click = function() {
   var scope = angular.element($("#enabled")).scope();
-  scope.openModal();
+  scope.openModal('credits');
 }
 
 win.menu = windowMenu;

@@ -31,6 +31,8 @@ To start/test:
 
 # Credits
 
+Built with ❤ and Javascript by [fm.to.it](http://fm.to.it)
+
 WtF.js is built on top of [NW.js](https://github.com/nwjs/nw.js) using 
 [nw-boilerplate](https://github.com/szwacz/nw-boilerplate) with some modifications.
 

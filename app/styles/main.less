@@ -1,3 +1,40 @@
+/*
+ * Font
+ */
+@font-face {
+    font-family: 'Bangers';
+    src:url('../fonts/Bangers.ttf.woff') format('woff'),
+        url('../fonts/Bangers.ttf.svg#Bangers') format('svg'),
+        url('../fonts/Bangers.ttf.eot'),
+        url('../fonts/Bangers.ttf.eot?#iefix') format('embedded-opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+button:focus {
+  outline:0 !important;
+}
+h3.app-title {
+  font-family: "Bangers";
+  line-height: 0.5;
+  color: #a10000;
+  font-size: 25px;
+  margin-top: 6px;
+}
+h3 {
+  font-family: "Bangers";
+}
+.container-fluid {
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow: hidden;
+}
+.panel {
+  border-radius: 4px;
+  background-color: #333333;
+}
+.btn-fullwidth {
+  width: 100%;
+}
 .topMargin {
   margin-top: 0.5em;
 }
@@ -6,32 +43,45 @@
 }
 .switchContainer {
   padding-left: 0;
+  margin-top: 65px;
+}
+.onoffLabel {
+  background-color: #375a7f;
+  width: 100%;
+}
+.onoffLabel .label-default {
+  background-color: #375a7f;
 }
 .ace_editor {
   height: 18em;
 }
 .logContainer {
-  height: 9em;
   overflow-y: scroll;
   font-family: monospace;
-}
-p.logs {
-  margin: 0;
-  padding: 0;
   font-size: 0.9em;
 }
-p.logs .success {
+.logs td.status {
   font-weight: bold;
-  color: green;
-  display: inline-block;
+  width: 7em;
+  background-color: none;
+  text-align: center;
+  text-transform: uppercase;
+}
+.logs.table .col1 {
+  width: 14em;
+}
+.logs.table .col2 {
   width: 7em;
 }
-p.logs .error {
-  font-weight: bold;
-  color: firebrick;
-  display: inline-block;
-  width: 7em;
+.logs.table .col3 {
+  padding-left: 1em;
 }
+.table > thead > tr > td.info, .table > tbody > tr > td.info, .table > tfoot > tr > td.info, .table > thead > tr > th.info, .table > tbody > tr > th.info, .table > tfoot > tr > th.info, .table > thead > tr.info > td, .table > tbody > tr.info > td, .table > tfoot > tr.info > td, .table > thead > tr.info > th, .table > tbody > tr.info > th, .table > tfoot > tr.info > th {
+  background-color: none;
+}
+.logs.table > tbody > tr > td.status.info { color: aqua; background-color: transparent !important; }
+.logs.table > tbody > tr > td.status.success { color: green; background-color: transparent!important; }
+.logs.table > tbody > tr > td.status.error { color: firebrick; background-color: transparent !important; }
 .panel {
   margin-bottom: 8px;
 }
@@ -48,4 +98,26 @@ p.logs .error {
 .pollingInterval {
   padding-left: 0;
   padding-right: 0;
+}
+.input-group {
+  margin: 2px 0;
+}
+.input-group-btn,
+.input-group-addon {
+  color: #fff;
+  background-color: #375a7f;
+}
+#config .container-fluid {
+  padding: 0;
+}
+
+/*
+ * Modal overrides
+ */
+.modal-dialog {
+  width: 95%;
+  margin: 30px auto;
+}
+.modal-content {
+  background-color: #333;
 }

@@ -7,6 +7,17 @@ var fs = require('fs'),
 // Add DOMParser
 global.DOMParser = require('xmldom').DOMParser;
 
+// Processing panel resize
+var resize = function () {
+  var panelHeight = $(window).height() - $('.topMargin').offset().top - $('.topMargin').height() - 10;
+  $('#LogsPanel').height(panelHeight);
+  $('#ProcessingPanel').height(panelHeight);
+  $('.ace_editor').height(panelHeight-65);
+  $('.logContainer').height(panelHeight-50);
+}
+global.window.onresize = resize;
+$(document).ready(resize);
+
 // Main Angular module with deps
 var app = angular.module('wtfApp', [
   'ui.bootstrap',
@@ -14,20 +25,25 @@ var app = angular.module('wtfApp', [
   'ui.ace'
 ]);
 
+// Modal controller
+app.controller('ModalInstanceCtrl', function ($scope, $uibModalInstance) {
+  $scope.ok = function () {
+    $uibModalInstance.close();
+  };
+});
+
 // Main app controller
 app.controller('wtfCtrl', ['$scope', '$interval', '$uibModal', function ($scope, $interval, $uibModal, $uibModalInstance) {
   console.log('App loaded, controller setting up.');
 
   // BASIC VARIABLES
   var interval, xsltConf;
+  var logsVisible = false;
 
   $scope.wtfActive = false;
 
-  $scope.watchFolderPath = localStorage.watchFolderPath ? localStorage.watchFolderPath : '//172.1.1.20/in';
+  $scope.watchFolderPath = localStorage.watchFolderPath ? localStorage.watchFolderPath : '//127.0.0.1/in';
   $scope.$watch('watchFolderPath', function() { localStorage.watchFolderPath = $scope.watchFolderPath; });
-
-  $scope.watchFolderFileMask = localStorage.watchFolderFileMask ? localStorage.watchFolderFileMask : '*.*';
-  $scope.$watch('watchFolderFileMask', function() { localStorage.watchFolderFileMask = $scope.watchFolderFileMask; });
 
   $scope.processingOrder = localStorage.processingOrder ? localStorage.processingOrder : 'date';
   $scope.$watch('processingOrder', function() { localStorage.processingOrder = $scope.processingOrder; });
@@ -71,10 +87,10 @@ app.controller('wtfCtrl', ['$scope', '$interval', '$uibModal', function ($scope,
     removeNamespacedNamespace: true
   };
 
-  $scope.treatedPath = localStorage.treatedPath ? localStorage.treatedPath : '//172.1.1.20/out/treated';
+  $scope.treatedPath = localStorage.treatedPath ? localStorage.treatedPath : '//127.0.0.1/out/treated';
   $scope.$watch('treatedPath', function() { localStorage.treatedPath = $scope.treatedPath; });
 
-  $scope.processedPath = localStorage.processedPath ? localStorage.processedPath : '//172.1.1.20/out/processed';
+  $scope.processedPath = localStorage.processedPath ? localStorage.processedPath : '//127.0.0.1/out/processed';
   $scope.$watch('processedPath', function() { localStorage.processedPath = $scope.processedPath; });
 
   $scope.treatedRename = '// JS code here';
@@ -116,10 +132,11 @@ app.controller('wtfCtrl', ['$scope', '$interval', '$uibModal', function ($scope,
     console.log('open link');
     gui.Shell.openExternal(link);
   }
-  $scope.openModal = function () {
+  $scope.openModal = function (content) {
     var modalInstance = $uibModal.open({
       animation: true,
-      templateUrl: 'modalContent.html',
+      templateUrl: content+'.html',
+      controller: 'ModalInstanceCtrl',
       size: 'lg'
     });
   };
@@ -189,7 +206,8 @@ app.controller('wtfCtrl', ['$scope', '$interval', '$uibModal', function ($scope,
       $scope.logs.unshift({time: new Date(), status: 'info', log: 'Stopping polling'})
       return;
     }
-    // Otherwise setup polling
+    // Otherwise setup polling & display logs
+    $scope.logsVisible = $scope.wtfActive;
     $scope.logs.unshift({time: new Date(), status: 'info', log: 'Starting polling'});
     interval = $interval(function () {
 
@@ -241,7 +259,6 @@ app.controller('wtfCtrl', ['$scope', '$interval', '$uibModal', function ($scope,
     }, $scope.pollingInterval*1000);
 
   }
-
 }]);
 
 // Modal controller

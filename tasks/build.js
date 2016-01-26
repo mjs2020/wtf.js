@@ -41,6 +41,10 @@ var copyTask = function () {
     projectDir.copy('app/node_modules/bootstrap/fonts/glyphicons-halflings-regular.woff2', destDir.path('fonts/glyphicons-halflings-regular.woff2'), { overwrite: true });
     projectDir.copy('app/node_modules/bootstrap/fonts/glyphicons-halflings-regular.woff', destDir.path('fonts/glyphicons-halflings-regular.woff'), { overwrite: true });
     projectDir.copy('app/node_modules/bootstrap/fonts/glyphicons-halflings-regular.ttf', destDir.path('fonts/glyphicons-halflings-regular.ttf'), { overwrite: true });
+    projectDir.copy('app/fonts/Bangers.ttf', destDir.path('fonts/Bangers.ttf'), { overwrite: true });
+    projectDir.copy('app/fonts/Bangers.ttf.eot', destDir.path('fonts/Bangers.ttf.eot'), { overwrite: true });
+    projectDir.copy('app/fonts/Bangers.ttf.svg', destDir.path('fonts/Bangers.ttf.svg'), { overwrite: true });
+    projectDir.copy('app/fonts/Bangers.ttf.woff', destDir.path('fonts/Bangers.ttf.woff'), { overwrite: true });
     return projectDir.copyAsync('app', destDir.path(), {
         overwrite: true,
         matching: paths.copyFromAppDir
@@ -62,7 +66,7 @@ gulp.task('copy-watch', copyTask);
 
 
 var lessTask = function () {
-    return gulp.src('app/styles/main.less')
+    return gulp.src('app/styles/*.less')
     .pipe(less())
     .pipe(gulp.dest(destDir.path('styles')));
 };
