@@ -17,7 +17,6 @@ outputs files in the "treated" and "processed" folders.
 ![Screenshot](screenshot.jpg "Screenshot")
 
 ### Download and usage
-
 Please use these links to download and install for your platform:
 
 * Linux TODO
