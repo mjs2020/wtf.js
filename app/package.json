@@ -1,6 +1,6 @@
 {
   "name": "wtf.js-processor",
-  "productName": "WtF.js Watch that Folder Processor",
+  "productName": "WtF.js",
   "description": "Process files from a watchfolder and output them somewhere.",
   "version": "0.1.0",
   "author": "Francesco Merletti <me@fm.to.it>",
