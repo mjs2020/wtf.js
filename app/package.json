@@ -1,5 +1,5 @@
 {
-  "name": "WtF.js",
+  "name": "wtf.js",
   "productName": "WtF.js",
   "description": "Process files from a watchfolder and output them somewhere.",
   "version": "0.1.0",
